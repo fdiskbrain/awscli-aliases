@@ -1,7 +1,6 @@
 [toplevel]
 
 whoami = sts get-caller-identity
-
 create-assume-role =
   !f() {
     aws iam create-role --role-name "${1}" \
@@ -134,3 +133,7 @@ revoke-my-ip-all =
   !f() {
     aws revoke-my-ip ${1} all all
   }; f
+## Add myself
+grw = rds describe-db-clusters --query 'DBClusters[].DBClusterMembers[?IsClusterWriter==`true`][]'
+gra = rds describe-db-clusters --query 'DBClusters[].DBClusterMembers[]'
+grr = rds describe-db-clusters --query 'DBClusters[].DBClusterMembers[?IsClusterWriter==`false`][]'
