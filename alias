@@ -133,7 +133,24 @@ revoke-my-ip-all =
   !f() {
     aws revoke-my-ip ${1} all all
   }; f
+
 ## Add myself
+
 grw = rds describe-db-clusters --query 'DBClusters[].DBClusterMembers[?IsClusterWriter==`true`][]'
+
 gra = rds describe-db-clusters --query 'DBClusters[].DBClusterMembers[]'
+
 grr = rds describe-db-clusters --query 'DBClusters[].DBClusterMembers[?IsClusterWriter==`false`][]'
+
+update-rds =
+  !f() {
+    aws rds modify-db-cluster --db-cluster-identifier ${1} --engine-version ${2} --apply-immediately
+  }; f
+ 
+get-rds-version =
+  !f() {
+    version_cache="/tmp/rds-version.json"
+    [ -f ${version_cache} ] ||  aws rds describe-db-engine-versions > ${version_cache}
+    jq -r '.DBEngineVersions[]|.Engine+": "+.EngineVersion+"-->"+.ValidUpgradeTarget[].EngineVersion' ${version_cache}
+  }; f
+
