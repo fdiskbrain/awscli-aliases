@@ -161,11 +161,10 @@ get-rds-version =
     version_cache="$HOME/.aws/cli/cache/rds-version.json"
     now=$(date +%s)
     need_update='3600'
-    if [ -f ${version_cache} ];then
-    ## todo check os ,only Macos working
+    if [ -f ${version_cache} ] ;then
       need_update=$(expr ${now} - $(${STAT} ${version_cache}))
     fi
-    if [ ${need_update} -ge 3600 ];then
+    if [ ${need_update} -ge 3600 ] || [ ! -s ${version_cache} ];then
       aws rds describe-db-engine-versions > ${version_cache}
     fi
     jq -r '.DBEngineVersions[]|.Engine+": "+.EngineVersion+"-->"+.ValidUpgradeTarget[].EngineVersion' ${version_cache}
