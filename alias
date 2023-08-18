@@ -149,12 +149,21 @@ update-rds =
  
 get-rds-version =
   !f() {
+    case "$OSTYPE" in
+      solaris*) echo "SOLARIS" ;;
+      darwin*)  STAT='stat -f %m' ;; 
+      linux*)   STAT='stat -c %Y' ;;
+      bsd*)     echo "BSD" ;;
+      msys*)    echo "WINDOWS" ;;
+      cygwin*)  echo "ALSO WINDOWS" ;;
+      *)        echo "unknown: $OSTYPE" ;;
+    esac
     version_cache="$HOME/.aws/cli/cache/rds-version.json"
     now=$(date +%s)
     need_update='3600'
     if [ -f ${version_cache} ];then
     ## todo check os ,only Macos working
-      need_update=$(expr ${now} - $(stat -f %m ${version_cache}))
+      need_update=$(expr ${now} - $(${STAT} ${version_cache}))
     fi
     if [ ${need_update} -ge 3600 ];then
       aws rds describe-db-engine-versions > ${version_cache}
