@@ -153,6 +153,7 @@ get-rds-version =
     now=$(date +%s)
     need_update='3600'
     if [ -f ${version_cache} ];then
+    ## todo check os ,only Macos working
       need_update=$(expr ${now} - $(stat -f %m ${version_cache}))
     fi
     if [ ${need_update} -ge 3600 ];then
